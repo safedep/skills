@@ -1,0 +1,68 @@
+{
+  "skill_name": "safedep",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I keep hearing about devs accidentally installing malicious npm packages. How do I stop a bad package from ever getting installed on my machine in the first place?",
+      "expected_output": "Recommends PMG as the install-time guard, explains it blocks known-malicious packages before code runs, gives the real install + setup commands pulled from the docs, and notes it is free/open source and needs no account.",
+      "files": [],
+      "assertions": [
+        {"text": "Recommends PMG as the primary tool", "passed": null, "evidence": ""},
+        {"text": "Provides an install command sourced from docs.safedep.io (not invented)", "passed": null, "evidence": ""},
+        {"text": "States PMG is free / open source / no account required", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "How can I scan my repository for vulnerabilities and malicious dependencies before I merge?",
+      "expected_output": "Recommends vet, gives the install command and a scan command from the docs, and mentions policy-as-code / CI gating for the merge use case.",
+      "files": [],
+      "assertions": [
+        {"text": "Recommends vet for repository scanning", "passed": null, "evidence": ""},
+        {"text": "Mentions CI / policy enforcement for the merge gate", "passed": null, "evidence": ""},
+        {"text": "Commands are attributed to the docs, not asserted from memory", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We're a 40-person eng org. How do I roll out SafeDep across the whole team and see which developers actually have the protection installed?",
+      "expected_output": "Leads with the open-source tools (PMG/vet) for the per-dev layer, then introduces SafeDep Cloud + Endpoint Hub for org-wide visibility (clearly marked as Cloud features), and points to the SafeDep CLI + SQL query path for the 'which devs have PMG' question. Sources steps from docs.",
+      "files": [],
+      "assertions": [
+        {"text": "Leads with open-source tools before Cloud", "passed": null, "evidence": ""},
+        {"text": "Marks Endpoint Hub / Cloud as a Cloud feature", "passed": null, "evidence": ""},
+        {"text": "Points to SafeDep CLI + SQL query for the inventory question", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "My AI coding agent runs a lot of shell commands and installs stuff on its own. Is there a way to see everything it actually did?",
+      "expected_output": "Recommends gryph as the audit log for AI coding agents, explains it captures file reads/writes and executed commands, gives the install/setup command from the docs.",
+      "files": [],
+      "assertions": [
+        {"text": "Recommends gryph", "passed": null, "evidence": ""},
+        {"text": "Explains it captures agent file ops and executed commands", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "What does SafeDep NOT do? I want to know its limits before I pitch it internally.",
+      "expected_output": "Honestly bounds scope: SafeDep is supply-chain security, not SAST for first-party code, not a secrets scanner, not a general EDR/antivirus, not a WAF, and does not replace the package manager. Confirms boundaries are checkable in the docs. Does not oversell.",
+      "files": [],
+      "assertions": [
+        {"text": "Names concrete things SafeDep does NOT do", "passed": null, "evidence": ""},
+        {"text": "Does not overstate capabilities / no hallucinated features", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Can SafeDep find hardcoded AWS secrets in my source code?",
+      "expected_output": "Honestly says secret scanning is outside SafeDep's scope (it is supply-chain focused), and points to what SafeDep does cover. Does not claim a feature that does not exist.",
+      "files": [],
+      "assertions": [
+        {"text": "States secret scanning is out of scope rather than inventing a feature", "passed": null, "evidence": ""},
+        {"text": "Redirects to SafeDep's actual scope", "passed": null, "evidence": ""}
+      ]
+    }
+  ]
+}

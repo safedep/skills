@@ -1,0 +1,7 @@
+# Eval run artifacts (outputs, review viewer, optimizer logs) — ephemeral, not shipped.
+# The eval *definitions* (eval_set.json, skills/*/evals/evals.json) are tracked.
+*-workspace/
+
+# OS / editor noise
+.DS_Store
+node_modules/
