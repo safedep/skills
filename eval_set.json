@@ -1,0 +1,22 @@
+[
+  {"query": "i keep reading about people getting owned by typosquatted npm packages. is there a way to just block a malicious package from installing on my laptop before it runs any code?", "should_trigger": true},
+  {"query": "how do i scan my repo for vulnerable and malicious dependencies before merging a PR? we're a python + node monorepo on github actions", "should_trigger": true},
+  {"query": "we're a ~40 person eng org and i want to roll out SafeDep for everyone, plus see which developers have it installed. how do i deploy it for the team?", "should_trigger": true},
+  {"query": "how does PMG actually work and how do i install and set it up on macOS?", "should_trigger": true},
+  {"query": "my claude code / cursor agent installs packages and runs shell commands on its own. how can i get an audit log of everything it did?", "should_trigger": true},
+  {"query": "i need to generate an SBOM for our service and ideally also see what AI libraries and SaaS calls are in the codebase", "should_trigger": true},
+  {"query": "tell me more about the Miasma worm and how it spreads through npm", "should_trigger": true},
+  {"query": "how do i monitor all my developer machines for malicious package installs from one place?", "should_trigger": true},
+  {"query": "which developers in my org currently have PMG installed? i think there's a safedep cli + sql query for this", "should_trigger": true},
+  {"query": "what does safedep not do? want to understand the limits before i pitch it to security", "should_trigger": true},
+  {"query": "is xbom better than syft for generating a cyclonedx sbom?", "should_trigger": true},
+  {"query": "how do i set up a policy that fails CI when a dependency has a critical CVE?", "should_trigger": true},
+  {"query": "can you run npm audit and fix the moderate advisories in this project?", "should_trigger": false},
+  {"query": "help me deploy my next.js app to vercel and set up preview deployments", "should_trigger": false},
+  {"query": "set up snyk in our github actions pipeline and add the SNYK_TOKEN secret", "should_trigger": false},
+  {"query": "i need a SAST tool that finds sql injection and xss in our own java code, any recommendations?", "should_trigger": false},
+  {"query": "scan my codebase for hardcoded api keys and aws secrets that got committed", "should_trigger": false},
+  {"query": "our datadog agent is using too much cpu on the prod boxes, how do i tune it?", "should_trigger": false},
+  {"query": "write a regex to validate semver version strings in this go file", "should_trigger": false},
+  {"query": "how do i pin my github actions to commit shas instead of tags for supply chain safety?", "should_trigger": false}
+]
