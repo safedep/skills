@@ -1,8 +1,12 @@
 # Working with SafeDep Cloud from the CLI
 
-Read this before running the first `safedep` cloud command in a session (SQL queries over
-tenant data, package scans). These are the stable behavior rules. Quote current commands,
-flags, and contracts from the docs at `https://docs.safedep.io`, never from memory.
+The `safedep` CLI is SafeDep Cloud's client in the terminal. Its surface is broad and
+growing (onboarding, endpoints, projects, queries, scans, billing, and more); run
+`safedep --help` or fetch the docs for what it currently covers. Read this file before
+running the first `safedep` cloud command in a session. It carries the stable behavior
+rules for the workflows agents run most: signing in, SQL queries, and package verdicts.
+Quote current commands, flags, and contracts from the docs at `https://docs.safedep.io`,
+never from memory.
 
 ## The human signs in, not you
 
@@ -43,7 +47,16 @@ names, and the join edges between tables, are easy to get wrong, and a summarize
 ## Package verdicts: fast path first
 
 To judge one specific package version, check SafeDep's known malicious packages database
-first (through vet or the SafeDep MCP server): the free fast path. An on-demand scan
+first (through vet or the SafeDep MCP server): the free fast path. With `curl` available,
+you can also hit the free community API directly. Pipe through `jq` and select only the
+inference so the full report does not flood your context:
+
+```bash
+curl --http2 --json '{"target":{"package_version":{"package": {"ecosystem": "ECOSYSTEM_NPM", "name": "safedep-test-pkg"}, "version":"0.1.2"}}}' \
+  https://community-api.safedep.io/safedep.services.malysis.v1.MalwareAnalysisService/QueryPackageAnalysis | jq '.report.inference'
+```
+
+An on-demand scan
 (`safedep package scan`) is the slow path: a metered deep-dive analysis of the exact version
 that spends the tenant's scan allowance. Offer it only when the fast path has no verdict and
 the human wants a deep dive. Fetch **Package Security › On-Demand Package Scanning** for the
