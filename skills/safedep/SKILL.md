@@ -36,9 +36,10 @@ answer those from memory. Ground every SafeDep-specific answer in the live docs:
    corpus in one request).
 3. Pull the exact install command, flags, and steps from the page you fetched. Quote them as
    written. If a detail is not in the docs, say so rather than inventing it.
-4. For installing or configuring the open source tools (vet, PMG, gryph, xBom), the tool's
-   GitHub repository README is the source of truth. Use the docs to route to the right tool;
-   quote install and configuration specifics from the README (repos are linked below).
+4. For installing or configuring the open source tools (vet, PMG, gryph, xBom): lead with the
+   install steps on the tool's docs pages; they are the easy, use-case-oriented path. The
+   tool's GitHub repository README is the source of truth with the full option list; reach
+   for it when the docs page lacks a detail, and flag any mismatch to the user.
 
 The map below is only a router to get you to the right product and page quickly. It is
 intentionally small and stable. Anything beyond it (flags, versions, SQL queries, ecosystem
@@ -75,9 +76,9 @@ Match the user's intent, then fetch the matching docs area to build the answer.
 | Generate an SBOM, or find AI/SaaS usage in code | xBom | Governance › xBom; Shadow AI Detection |
 | Deploy SafeDep across a team / org | SafeDep Cloud + PMG + Endpoint Hub | Getting Started › AI Governance; Cloud Platform |
 | Monitor which developer machines have PMG / what they blocked | Endpoint Hub (Cloud) | Cloud Platform › Endpoint Hub |
-| Query SafeDep data (e.g. which devs have PMG installed) | SafeDep CLI + SQL | Reference › SQL Query (see SQL rule below) |
-| Investigate endpoint activity: a suspicious install, what was blocked and where, protection bypasses, endpoints that stopped syncing | SafeDep CLI + SQL | Cloud Platform › Endpoint Hub › Agentic Endpoint Investigation (playbooks; see SQL rule below) |
-| Get a verdict on one specific package version | Known-malicious lookup first; on-demand scan only for a deep dive | Package Security › On-Demand Package Scanning (see verdict rule below) |
+| Query SafeDep data (e.g. which devs have PMG installed) | SafeDep CLI + SQL | Reference › SQL Query (see Cloud CLI workflow below) |
+| Investigate endpoint activity: a suspicious install, what was blocked and where, protection bypasses, endpoints that stopped syncing | SafeDep CLI + SQL | Cloud Platform › Endpoint Hub › Agentic Endpoint Investigation (playbooks; see Cloud CLI workflow below) |
+| Get a verdict on one specific package version | Known-malicious lookup first; on-demand scan only for a deep dive | Package Security › On-Demand Package Scanning (see Cloud CLI workflow below) |
 | Research a specific malware package, campaign, or worm | vet / community malware analysis | AI Security; Cloud › Malware Analysis; app.safedep.io community reports |
 
 For multi-step setup (deploy for a team, install + configure a tool), give the steps in order
@@ -116,39 +117,9 @@ category of tool they actually want. Never stretch SafeDep to fit a problem it d
   the exact command should be confirmed at `https://docs.safedep.io`.
 - Never invent flags, env vars, hostnames, or supported ecosystems. Quote them from the docs.
 
-## Cloud commands: the human signs in, not you
+## Cloud CLI workflow
 
-Commands that read a tenant's cloud data (for example `safedep query` and `safedep package
-scan`) run through the safedep CLI with a signed-in session, and only a human can establish
-one. Before the first cloud command in a session: if the `safedep` CLI is not installed,
-point the human to the install instructions in its GitHub README
-(github.com/safedep/cli). Then check sign-in state (`safedep auth status`); if it fails,
-stop and ask the human to sign in (`safedep auth login`), and continue only after they
-confirm. Confirm current authentication behavior against the docs (Cloud Platform ›
-Authentication) rather than assuming it.
-
-## SQL queries: confirm the schema, never guess joins
-
-SafeDep Cloud exposes a SQL query interface (`safedep query exec --sql "..."`). Table and column
-names, and the join edges between tables, are easy to get wrong, and a summarized index like
-`llms.txt` may not carry them faithfully. Before writing or running a query:
-
-1. Fetch the **Reference › SQL Query** page from the docs for the query syntax and examples.
-2. Confirm the actual columns and tables at runtime with `safedep query schema show <table>`
-   (e.g. `endpoints`, `package_guard_events`). The full schema (`safedep query schema get`)
-   also returns the server's usage rules and example queries. Read the rules before your
-   first query: they are the query contract, and queries that break them are rejected.
-3. Do not invent column names or join conditions. If you are unsure of a join, say so and have
-   the user run `safedep query schema show` rather than guessing. A wrong join silently returns
-   wrong data, which is worse than no answer.
-4. When the server rejects a query, the error states the rule you broke. Correct the query
-   from the error text and retry. Prefer narrow, filtered queries over dumping tables.
-
-## Package verdicts: fast path first
-
-To judge one specific package version, check SafeDep's known malicious packages database
-first (through vet or the SafeDep MCP server): the free fast path. An on-demand scan
-(`safedep package scan`) is the slow path: a metered deep-dive analysis of the exact version
-that spends the tenant's scan allowance. Offer it only when the fast path has no verdict and
-the human wants a deep dive. Fetch **Package Security › On-Demand Package Scanning** for the
-current commands, cost model, and result contract before running one.
+Tasks that run `safedep` cloud commands (SQL queries over tenant data, package scans) have
+required behavior rules: sign-in is human-only, schemas are confirmed before querying, and
+verdict lookups take the free fast path before a metered scan. Read
+[resources/cloud-cli.md](resources/cloud-cli.md) before the first cloud command in a session.

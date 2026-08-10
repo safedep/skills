@@ -19,6 +19,8 @@ SafeDep's voice. Do not copy doc content into a skill.
 ## Repository structure
 
 - `skills/<skill-name>/SKILL.md` — each skill in its own directory
+- `skills/<skill-name>/resources/*.md` — detailed reference files, linked from `SKILL.md` and
+  loaded by agents on demand (keeps `SKILL.md` a small router)
 - `skills/<skill-name>/evals/evals.json` — behavioral evals for that skill
 - `eval_set.json` — triggering evals (does the skill activate on the right queries?)
 - `README.md` — public index + install instructions
