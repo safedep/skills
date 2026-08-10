@@ -35,11 +35,14 @@ answer those from memory. Ground every SafeDep-specific answer in the live docs:
    its URL. Use it to find the right page, then fetch that page (or `llms-full.txt` for the full
    corpus in one request).
 3. Pull the exact install command, flags, and steps from the page you fetched. Quote them as
-   written. If a detail is not in the docs, say so rather than inventing it.
-4. For installing or configuring the open source tools (vet, PMG, gryph, xBom): lead with the
-   install steps on the tool's docs pages; they are the easy, use-case-oriented path. The
-   tool's GitHub repository README is the source of truth with the full option list; reach
-   for it when the docs page lacks a detail, and flag any mismatch to the user.
+   written. If a detail is not in the docs, follow the source ladder in rule 4 before saying
+   it is not covered; never invent it.
+4. For the open source tools (vet, PMG, gryph, xBom), use this source ladder: the tool's
+   docs pages first (easy, use-case oriented; lead with them for install and configuration),
+   then the tool's GitHub repository for anything the docs do not cover (debugging,
+   internals, edge-case behavior): the README, the `docs/` directory, and open issues.
+   Repos are linked in the table below. The repository is the source of truth; flag any
+   mismatch with the docs to the user. Say a thing is not covered only after checking both.
 
 The map below is only a router to get you to the right product and page quickly. It is
 intentionally small and stable. Anything beyond it (flags, versions, SQL queries, ecosystem

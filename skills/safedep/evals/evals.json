@@ -97,6 +97,17 @@
         {"text": "Discovers flags via --help or the CLI docs instead of inventing them", "passed": null, "evidence": ""},
         {"text": "Does not invent flag names or recall them from memory as fact", "passed": null, "evidence": ""}
       ]
+    },
+    {
+      "id": 10,
+      "prompt": "I'm getting sandbox errors when installing packages through PMG. Help me debug them.",
+      "expected_output": "Checks the SafeDep docs first (Docs MCP or llms.txt) for PMG sandbox material. When the docs do not cover debugging, escalates to the PMG GitHub repository (README, docs/ directory, open issues) instead of stopping at 'not in the docs' or inventing behavior. Grounds any command or config it suggests in one of those sources.",
+      "files": [],
+      "assertions": [
+        {"text": "Checks docs.safedep.io first for PMG sandbox content", "passed": null, "evidence": ""},
+        {"text": "Falls back to the PMG GitHub repository (README/docs/issues) when the docs do not cover it", "passed": null, "evidence": ""},
+        {"text": "Does not invent sandbox behavior, flags, or config from memory", "passed": null, "evidence": ""}
+      ]
     }
   ]
 }
