@@ -108,6 +108,18 @@
         {"text": "Falls back to the PMG GitHub repository (README/docs/issues) when the docs do not cover it", "passed": null, "evidence": ""},
         {"text": "Does not invent sandbox behavior, flags, or config from memory", "passed": null, "evidence": ""}
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "How do I get started with SafeDep?",
+      "expected_output": "Answers as a two-rung capability ladder grounded in the Get Started docs: start free now with the open source tool that fits the user's use case (PMG for install-time blocking, vet for repo scanning, etc.; no account needed), and add SafeDep Cloud when the need is team- or org-wide (fleet visibility, policy, one tenant to query), clearly marked as a Cloud feature. Asks about or adapts to the user's use case rather than dumping every tool.",
+      "files": [],
+      "assertions": [
+        {"text": "Presents the ladder explicitly: free OSS first, Cloud for team/org needs", "passed": null, "evidence": ""},
+        {"text": "States the OSS tools are free and need no account", "passed": null, "evidence": ""},
+        {"text": "Marks Cloud capabilities as Cloud features rather than blending them in", "passed": null, "evidence": ""},
+        {"text": "Grounds the steps in Get Started docs pages, not memory", "passed": null, "evidence": ""}
+      ]
     }
   ]
 }
