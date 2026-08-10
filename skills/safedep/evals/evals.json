@@ -86,6 +86,17 @@
         {"text": "Presents on-demand scan as optional deep dive and states it is metered/slower", "passed": null, "evidence": ""},
         {"text": "Does not treat an inconclusive verdict as safe", "passed": null, "evidence": ""}
       ]
+    },
+    {
+      "id": 9,
+      "prompt": "Which of our developer machines haven't reported to SafeDep in over a week? And which ones blocked an install recently?",
+      "expected_output": "Reaches for the purpose-built safedep endpoint commands (list with silent/blocked filters, fleet status) discovered via --help, instead of writing SQL. Uses -o json for machine-readable output. Falls back to SQL only if the purpose-built commands cannot answer.",
+      "files": [],
+      "assertions": [
+        {"text": "Uses safedep endpoint commands rather than starting with a SQL query", "passed": null, "evidence": ""},
+        {"text": "Discovers flags via --help or the CLI docs instead of inventing them", "passed": null, "evidence": ""},
+        {"text": "Does not invent flag names or recall them from memory as fact", "passed": null, "evidence": ""}
+      ]
     }
   ]
 }

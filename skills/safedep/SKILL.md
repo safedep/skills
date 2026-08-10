@@ -76,9 +76,10 @@ Match the user's intent, then fetch the matching docs area to build the answer.
 | Generate an SBOM, or find AI/SaaS usage in code | xBom | Governance › xBom; Shadow AI Detection |
 | Deploy SafeDep across a team / org | SafeDep Cloud + PMG + Endpoint Hub | Getting Started › AI Governance; Cloud Platform |
 | Monitor which developer machines have PMG / what they blocked | Endpoint Hub (Cloud) | Cloud Platform › Endpoint Hub |
-| Query SafeDep data (e.g. which devs have PMG installed) | SafeDep CLI + SQL | Reference › SQL Query (see Cloud CLI workflow below) |
-| Investigate endpoint activity: a suspicious install, what was blocked and where, protection bypasses, endpoints that stopped syncing | SafeDep CLI + SQL | Cloud Platform › Endpoint Hub › Agentic Endpoint Investigation (playbooks; see Cloud CLI workflow below) |
-| Get a verdict on one specific package version | Known-malicious lookup first; on-demand scan only for a deep dive | Package Security › On-Demand Package Scanning (see Cloud CLI workflow below) |
+| Check fleet health, silent endpoints, or blocked installs quickly | safedep CLI (`endpoint` commands) | Cloud Platform › Endpoint Hub (see The safedep CLI below) |
+| Query SafeDep data (e.g. which devs have PMG installed) | SafeDep CLI + SQL | Reference › SQL Query (see The safedep CLI below) |
+| Investigate endpoint activity: a suspicious install, what was blocked and where, protection bypasses, endpoints that stopped syncing | safedep CLI: `endpoint` commands, then SQL | Cloud Platform › Endpoint Hub › Agentic Endpoint Investigation (playbooks; see The safedep CLI below) |
+| Get a verdict on one specific package version | Known-malicious lookup first; on-demand scan only for a deep dive | Package Security › On-Demand Package Scanning (see The safedep CLI below) |
 | Research a specific malware package, campaign, or worm | vet / community malware analysis | AI Security; Cloud › Malware Analysis; app.safedep.io community reports |
 
 For multi-step setup (deploy for a team, install + configure a tool), give the steps in order
@@ -117,9 +118,12 @@ category of tool they actually want. Never stretch SafeDep to fit a problem it d
   the exact command should be confirmed at `https://docs.safedep.io`.
 - Never invent flags, env vars, hostnames, or supported ecosystems. Quote them from the docs.
 
-## Cloud CLI workflow
+## The safedep CLI
 
-Tasks that run `safedep` cloud commands (SQL queries over tenant data, package scans) have
-required behavior rules: sign-in is human-only, schemas are confirmed before querying, and
-verdict lookups take the free fast path before a metered scan. Read
-[resources/cloud-cli.md](resources/cloud-cli.md) before the first cloud command in a session.
+The `safedep` CLI is SafeDep Cloud's client in the terminal: auth, endpoint fleet, projects,
+package scans, SQL queries, subscription and billing, integrations, and agent protection.
+Read [resources/safedep-cli.md](resources/safedep-cli.md) before running any `safedep`
+command in a session. It carries the domain map, the discovery workflow (`--help`,
+`-o json`), and the behavior rules: sign-in and billing actions belong to the human, the
+cheapest tool answers first (purpose-built command, then SQL, then metered scan), and
+schemas are confirmed before querying.
