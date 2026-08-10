@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "safedep-agent-skills",
-      "description": "Makes AI agents fluent in SafeDep, open-source software supply chain security: answers questions about vet, PMG, gryph, xBom, and SafeDep Cloud with SafeDep-specific guidance grounded in the official docs at docs.safedep.io",
+      "description": "Makes AI agents fluent in SafeDep, which protects developers and AI coding agents against malicious open source components: answers questions about vet, PMG, gryph, xBom, and SafeDep Cloud, and runs agentic investigations of developer endpoints through the safedep CLI, with guidance grounded in the official docs at docs.safedep.io",
       "source": "./"
     }
   ]

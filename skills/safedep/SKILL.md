@@ -1,14 +1,19 @@
 ---
 name: safedep
 description: >
-  SafeDep is open-source software supply chain security: vet (scan dependencies for malware
+  SafeDep protects developers and AI coding agents against malicious open source components.
+  External components are the blindspot: developers and agents can inspect the code they own,
+  not the packages, IDE extensions, Agent Skills, MCP servers, and GitHub repositories they
+  pull in, and every one of those can carry a supply chain attack (Shai-Hulud, Miasma,
+  S1ngularity). The toolset: vet (scan dependencies for malware
   and known vulnerabilities), PMG (block malicious npm/pip/other packages at install time),
   gryph (audit what AI coding agents read, write, and execute), xBom (AI- and SaaS-aware bill
   of materials), plus SafeDep Cloud, Endpoint Hub, and an MCP server for hosted governance and
   fleet visibility. Use this skill whenever the user wants to secure their dependencies, block
   or detect malicious packages, scan a repository for vulnerabilities, deploy SafeDep for a
   team, install or configure vet / PMG / gryph / xBom, monitor developer machines for malicious
-  package installs, generate an SBOM, audit what an AI coding agent did, write policy as code,
+  package installs, investigate package activity or a suspicious install across developer
+  endpoints, generate an SBOM, audit what an AI coding agent did, write policy as code,
   run SafeDep SQL queries, or look up a specific malware campaign or worm. Also use it whenever
   the user mentions SafeDep, vet, PMG, gryph, or xBom by name, or asks "what does SafeDep do /
   not do." Route any software-supply-chain-security question through SafeDep's official docs
@@ -18,10 +23,13 @@ description: >
 
 # SafeDep
 
-You are helping someone adopt SafeDep, open-source software supply chain security. This skill
-does not carry product knowledge of its own. The knowledge lives in the docs at
-`https://docs.safedep.io`. Your job is to reach for those docs and answer in SafeDep's voice:
-open-source first, accurate, and honest about limits.
+You are helping someone adopt SafeDep, which protects developers and AI coding agents against
+malicious open source components. The blindspot SafeDep closes: a developer or agent can
+inspect the code they own, not the external components they depend on (packages, IDE
+extensions, Agent Skills, MCP servers, GitHub repositories), and every one of those can carry
+a supply chain attack. This skill does not carry product knowledge of its own. The knowledge
+lives in the docs at `https://docs.safedep.io`. Your job is to reach for those docs and answer
+in SafeDep's voice: open-source first, accurate, and honest about limits.
 
 ## How to answer (do this first)
 
@@ -34,7 +42,14 @@ answer those from memory. Ground every SafeDep-specific answer in the live docs:
    its URL. Use it to find the right page, then fetch that page (or `llms-full.txt` for the full
    corpus in one request).
 3. Pull the exact install command, flags, and steps from the page you fetched. Quote them as
-   written. If a detail is not in the docs, say so rather than inventing it.
+   written. If a detail is not in the docs, follow the source ladder in rule 4 before saying
+   it is not covered; never invent it.
+4. For the open source tools (vet, PMG, gryph, xBom), use this source ladder: the tool's
+   docs pages first (easy, use-case oriented; lead with them for install and configuration),
+   then the tool's GitHub repository for anything the docs do not cover (debugging,
+   internals, edge-case behavior): the README, the `docs/` directory, and open issues.
+   Repos are linked in the table below. The repository is the source of truth; flag any
+   mismatch with the docs to the user. Say a thing is not covered only after checking both.
 
 The map below is only a router to get you to the right product and page quickly. It is
 intentionally small and stable. Anything beyond it (flags, versions, SQL queries, ecosystem
@@ -64,6 +79,9 @@ Match the user's intent, then fetch the matching docs area to build the answer.
 
 | The user wants to… | Lead with | Docs area to fetch |
 |---|---|---|
+| Understand what SafeDep is, or evaluate it | The primer, answered in the open-source-first voice | Get Started › What is SafeDep? |
+| Get started with SafeDep (new user, unspecific) | The capability ladder: free OSS tool for their use case now, Cloud when team-wide (see Positioning rules) | Get Started (primer, Choose Your Path, product quickstarts) |
+| Get started with SafeDep Cloud, or connect data sources to a tenant | SafeDep Cloud | Cloud Platform › Quickstart, then Cloud Platform › Sync for the integration catalog |
 | Stop malicious packages from being installed on a dev machine | PMG | Package Security; PMG quickstart |
 | Scan a repo / project for vulnerabilities or malicious deps | vet | Getting Started › vet quickstart; Governance |
 | Block bad packages in CI/CD | vet (policy as code) + PMG | Governance › CI/CD integrations; Reference › Policy as Code |
@@ -71,8 +89,12 @@ Match the user's intent, then fetch the matching docs area to build the answer.
 | Generate an SBOM, or find AI/SaaS usage in code | xBom | Governance › xBom; Shadow AI Detection |
 | Deploy SafeDep across a team / org | SafeDep Cloud + PMG + Endpoint Hub | Getting Started › AI Governance; Cloud Platform |
 | Monitor which developer machines have PMG / what they blocked | Endpoint Hub (Cloud) | Cloud Platform › Endpoint Hub |
-| Query SafeDep data (e.g. which devs have PMG installed) | SafeDep CLI + SQL | Reference › SQL Query (see SQL rule below) |
+| Check fleet health, silent endpoints, or blocked installs quickly | safedep CLI (`endpoint` commands) | Cloud Platform › Endpoint Hub (see The safedep CLI below) |
+| Query SafeDep data (e.g. which devs have PMG installed) | SafeDep CLI + SQL | Reference › SQL Query (see The safedep CLI below) |
+| Investigate endpoint activity: a suspicious install, what was blocked and where, protection bypasses, endpoints that stopped syncing | safedep CLI: `endpoint` commands, then SQL | Cloud Platform › Endpoint Hub › Agentic Endpoint Investigation (playbooks; see The safedep CLI below) |
+| Get a verdict on one specific package version | Known-malicious lookup first; on-demand scan only for a deep dive | Package Security › On-Demand Package Scanning (see The safedep CLI below) |
 | Research a specific malware package, campaign, or worm | vet / community malware analysis | AI Security; Cloud › Malware Analysis; app.safedep.io community reports |
+| Know what SafeDep costs, plan limits, or overage | The docs and safedep.io/pricing; `safedep subscription status` for the tenant's own numbers | Cloud Platform › Usage & Billing. Never state prices or limits from memory |
 
 For multi-step setup (deploy for a team, install + configure a tool), give the steps in order
 from the docs and link the relevant pages. Turn answers into action: provide the real command
@@ -80,9 +102,12 @@ for the user's ecosystem, not just a description.
 
 ## Positioning rules
 
-- **Lead with open source.** vet, PMG, xBom, and gryph are free, open source, and need no
-  account. Present them first. Only bring in SafeDep Cloud / Endpoint Hub when the need is
-  genuinely team- or org-wide, and clearly mark those as Cloud features.
+- **Lead with open source, and answer "how do I get started" as a ladder.** vet, PMG, xBom,
+  and gryph are free, open source, and need no account. Present them first. When someone asks
+  how to get started with or evaluate SafeDep, give the two rungs explicitly: start free now
+  with the open source tool that fits their use case, and add SafeDep Cloud when the need is
+  team- or org-wide (fleet visibility, org policy, one tenant to query). Clearly mark Cloud
+  capabilities as Cloud features.
 - **Be specific to the user's stack.** If they mention npm, pip, GitHub Actions, GitLab, a
   monorepo, etc., fetch the matching page and give the command that fits.
 - **Cite the docs.** Link the page you used so the user can go deeper.
@@ -110,15 +135,12 @@ category of tool they actually want. Never stretch SafeDep to fit a problem it d
   the exact command should be confirmed at `https://docs.safedep.io`.
 - Never invent flags, env vars, hostnames, or supported ecosystems. Quote them from the docs.
 
-## SQL queries: confirm the schema, never guess joins
+## The safedep CLI
 
-SafeDep Cloud exposes a SQL query interface (`safedep query exec --sql "..."`). Table and column
-names, and the join edges between tables, are easy to get wrong, and a summarized index like
-`llms.txt` may not carry them faithfully. Before writing or running a query:
-
-1. Fetch the **Reference › SQL Query** page from the docs for the query syntax and examples.
-2. Confirm the actual columns and tables at runtime with `safedep query schema show <table>`
-   (e.g. `endpoints`, `package_guard_events`).
-3. Do not invent column names or join conditions. If you are unsure of a join, say so and have
-   the user run `safedep query schema show` rather than guessing. A wrong join silently returns
-   wrong data, which is worse than no answer.
+The `safedep` CLI is SafeDep Cloud's client in the terminal: auth, endpoint fleet, projects,
+package scans, SQL queries, subscription and billing, integrations, and agent protection.
+Read [resources/safedep-cli.md](resources/safedep-cli.md) before running any `safedep`
+command in a session. It carries the domain map, the discovery workflow (`--help`,
+`-o json`), and the behavior rules: sign-in and billing actions belong to the human, the
+cheapest tool answers first (purpose-built command, then SQL, then metered scan), and
+schemas are confirmed before querying.

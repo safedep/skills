@@ -63,6 +63,63 @@
         {"text": "States secret scanning is out of scope rather than inventing a feature", "passed": null, "evidence": ""},
         {"text": "Redirects to SafeDep's actual scope", "passed": null, "evidence": ""}
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "The npm package eslint-config-prettier was compromised last week. Was it installed on any of our developer machines, and did PMG block it?",
+      "expected_output": "Routes to the agentic endpoint investigation flow: checks sign-in with safedep auth status (asks the human to run safedep auth login if needed), confirms the schema before querying, runs a tenant-scoped SQL query over package_guard_events joined to endpoints with a bounded time range, and reports per-endpoint decisions (blocked vs allowed/confirmed). Sources query rules from the docs.",
+      "files": [],
+      "assertions": [
+        {"text": "Checks or mentions signed-in state and hands sign-in to the human if needed", "passed": null, "evidence": ""},
+        {"text": "Confirms schema (schema show/get) instead of inventing columns or joins", "passed": null, "evidence": ""},
+        {"text": "Queries package_guard_events joined to endpoints with a time bound, filtered on the package name", "passed": null, "evidence": ""},
+        {"text": "References the Endpoint Hub agentic investigation docs page or Reference SQL Query page", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "An endpoint installed left-pad-utils 2.1.0 from npm. Is it safe?",
+      "expected_output": "Takes the fast path first: checks SafeDep's known malicious packages database (vet or the SafeDep MCP server), which is free and instant. Offers an on-demand scan (safedep package scan) only as a deep dive, noting it takes minutes and spends the tenant's metered scan allowance. Gates the conclusion on the verdict field and treats inconclusive as needs-review.",
+      "files": [],
+      "assertions": [
+        {"text": "Checks the known-malicious database (fast path) before any on-demand scan", "passed": null, "evidence": ""},
+        {"text": "Presents on-demand scan as optional deep dive and states it is metered/slower", "passed": null, "evidence": ""},
+        {"text": "Does not treat an inconclusive verdict as safe", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Which of our developer machines haven't reported to SafeDep in over a week? And which ones blocked an install recently?",
+      "expected_output": "Reaches for the purpose-built safedep endpoint commands (list with silent/blocked filters, fleet status) discovered via --help, instead of writing SQL. Uses -o json for machine-readable output. Falls back to SQL only if the purpose-built commands cannot answer.",
+      "files": [],
+      "assertions": [
+        {"text": "Uses safedep endpoint commands rather than starting with a SQL query", "passed": null, "evidence": ""},
+        {"text": "Discovers flags via --help or the CLI docs instead of inventing them", "passed": null, "evidence": ""},
+        {"text": "Does not invent flag names or recall them from memory as fact", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "I'm getting sandbox errors when installing packages through PMG. Help me debug them.",
+      "expected_output": "Checks the SafeDep docs first (Docs MCP or llms.txt) for PMG sandbox material. When the docs do not cover debugging, escalates to the PMG GitHub repository (README, docs/ directory, open issues) instead of stopping at 'not in the docs' or inventing behavior. Grounds any command or config it suggests in one of those sources.",
+      "files": [],
+      "assertions": [
+        {"text": "Checks docs.safedep.io first for PMG sandbox content", "passed": null, "evidence": ""},
+        {"text": "Falls back to the PMG GitHub repository (README/docs/issues) when the docs do not cover it", "passed": null, "evidence": ""},
+        {"text": "Does not invent sandbox behavior, flags, or config from memory", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "How do I get started with SafeDep?",
+      "expected_output": "Answers as a two-rung capability ladder grounded in the Get Started docs: start free now with the open source tool that fits the user's use case (PMG for install-time blocking, vet for repo scanning, etc.; no account needed), and add SafeDep Cloud when the need is team- or org-wide (fleet visibility, policy, one tenant to query), clearly marked as a Cloud feature. Asks about or adapts to the user's use case rather than dumping every tool.",
+      "files": [],
+      "assertions": [
+        {"text": "Presents the ladder explicitly: free OSS first, Cloud for team/org needs", "passed": null, "evidence": ""},
+        {"text": "States the OSS tools are free and need no account", "passed": null, "evidence": ""},
+        {"text": "Marks Cloud capabilities as Cloud features rather than blending them in", "passed": null, "evidence": ""},
+        {"text": "Grounds the steps in Get Started docs pages, not memory", "passed": null, "evidence": ""}
+      ]
     }
   ]
 }
