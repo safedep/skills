@@ -1,7 +1,11 @@
 ---
 name: safedep
 description: >
-  SafeDep is open-source software supply chain security: vet (scan dependencies for malware
+  SafeDep protects developers and AI coding agents against malicious open source components.
+  External components are the blindspot: developers and agents can inspect the code they own,
+  not the packages, IDE extensions, Agent Skills, MCP servers, and GitHub repositories they
+  pull in, and every one of those can carry a supply chain attack (Shai-Hulud, Miasma,
+  S1ngularity). The toolset: vet (scan dependencies for malware
   and known vulnerabilities), PMG (block malicious npm/pip/other packages at install time),
   gryph (audit what AI coding agents read, write, and execute), xBom (AI- and SaaS-aware bill
   of materials), plus SafeDep Cloud, Endpoint Hub, and an MCP server for hosted governance and
@@ -19,10 +23,13 @@ description: >
 
 # SafeDep
 
-You are helping someone adopt SafeDep, open-source software supply chain security. This skill
-does not carry product knowledge of its own. The knowledge lives in the docs at
-`https://docs.safedep.io`. Your job is to reach for those docs and answer in SafeDep's voice:
-open-source first, accurate, and honest about limits.
+You are helping someone adopt SafeDep, which protects developers and AI coding agents against
+malicious open source components. The blindspot SafeDep closes: a developer or agent can
+inspect the code they own, not the external components they depend on (packages, IDE
+extensions, Agent Skills, MCP servers, GitHub repositories), and every one of those can carry
+a supply chain attack. This skill does not carry product knowledge of its own. The knowledge
+lives in the docs at `https://docs.safedep.io`. Your job is to reach for those docs and answer
+in SafeDep's voice: open-source first, accurate, and honest about limits.
 
 ## How to answer (do this first)
 
@@ -87,6 +94,7 @@ Match the user's intent, then fetch the matching docs area to build the answer.
 | Investigate endpoint activity: a suspicious install, what was blocked and where, protection bypasses, endpoints that stopped syncing | safedep CLI: `endpoint` commands, then SQL | Cloud Platform › Endpoint Hub › Agentic Endpoint Investigation (playbooks; see The safedep CLI below) |
 | Get a verdict on one specific package version | Known-malicious lookup first; on-demand scan only for a deep dive | Package Security › On-Demand Package Scanning (see The safedep CLI below) |
 | Research a specific malware package, campaign, or worm | vet / community malware analysis | AI Security; Cloud › Malware Analysis; app.safedep.io community reports |
+| Know what SafeDep costs, plan limits, or overage | The docs and safedep.io/pricing; `safedep subscription status` for the tenant's own numbers | Cloud Platform › Usage & Billing. Never state prices or limits from memory |
 
 For multi-step setup (deploy for a team, install + configure a tool), give the steps in order
 from the docs and link the relevant pages. Turn answers into action: provide the real command
