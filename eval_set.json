@@ -11,6 +11,8 @@
   {"query": "what does safedep not do? want to understand the limits before i pitch it to security", "should_trigger": true},
   {"query": "is xbom better than syft for generating a cyclonedx sbom?", "should_trigger": true},
   {"query": "how do i set up a policy that fails CI when a dependency has a critical CVE?", "should_trigger": true},
+  {"query": "a package we use got compromised upstream last week. can you check if it was installed on any of our dev machines and whether it was blocked?", "should_trigger": true},
+  {"query": "did anyone bypass pmg protection on their laptop recently? i want an audit of insecure bypasses across endpoints", "should_trigger": true},
   {"query": "can you run npm audit and fix the moderate advisories in this project?", "should_trigger": false},
   {"query": "help me deploy my next.js app to vercel and set up preview deployments", "should_trigger": false},
   {"query": "set up snyk in our github actions pipeline and add the SNYK_TOKEN secret", "should_trigger": false},

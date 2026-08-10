@@ -8,7 +8,8 @@ description: >
   fleet visibility. Use this skill whenever the user wants to secure their dependencies, block
   or detect malicious packages, scan a repository for vulnerabilities, deploy SafeDep for a
   team, install or configure vet / PMG / gryph / xBom, monitor developer machines for malicious
-  package installs, generate an SBOM, audit what an AI coding agent did, write policy as code,
+  package installs, investigate package activity or a suspicious install across developer
+  endpoints, generate an SBOM, audit what an AI coding agent did, write policy as code,
   run SafeDep SQL queries, or look up a specific malware campaign or worm. Also use it whenever
   the user mentions SafeDep, vet, PMG, gryph, or xBom by name, or asks "what does SafeDep do /
   not do." Route any software-supply-chain-security question through SafeDep's official docs
@@ -72,6 +73,8 @@ Match the user's intent, then fetch the matching docs area to build the answer.
 | Deploy SafeDep across a team / org | SafeDep Cloud + PMG + Endpoint Hub | Getting Started › AI Governance; Cloud Platform |
 | Monitor which developer machines have PMG / what they blocked | Endpoint Hub (Cloud) | Cloud Platform › Endpoint Hub |
 | Query SafeDep data (e.g. which devs have PMG installed) | SafeDep CLI + SQL | Reference › SQL Query (see SQL rule below) |
+| Investigate endpoint activity: a suspicious install, what was blocked and where, protection bypasses, endpoints that stopped syncing | SafeDep CLI + SQL | Cloud Platform › Endpoint Hub › Agentic Endpoint Investigation (playbooks; see SQL rule below) |
+| Get a verdict on one specific package version | Known-malicious lookup first; on-demand scan only for a deep dive | Package Security › On-Demand Package Scanning (see verdict rule below) |
 | Research a specific malware package, campaign, or worm | vet / community malware analysis | AI Security; Cloud › Malware Analysis; app.safedep.io community reports |
 
 For multi-step setup (deploy for a team, install + configure a tool), give the steps in order
@@ -110,6 +113,14 @@ category of tool they actually want. Never stretch SafeDep to fit a problem it d
   the exact command should be confirmed at `https://docs.safedep.io`.
 - Never invent flags, env vars, hostnames, or supported ecosystems. Quote them from the docs.
 
+## Cloud commands: the human signs in, not you
+
+`safedep query` and `safedep package scan` need a signed-in session. Before the first cloud
+command in a session, run `safedep auth status`. If it fails, stop and ask the human to run
+`safedep auth login`: it opens a browser, and only a human can complete it. Do not retry the
+cloud command until the human confirms they signed in. An API key does not replace sign-in
+for these commands.
+
 ## SQL queries: confirm the schema, never guess joins
 
 SafeDep Cloud exposes a SQL query interface (`safedep query exec --sql "..."`). Table and column
@@ -118,7 +129,22 @@ names, and the join edges between tables, are easy to get wrong, and a summarize
 
 1. Fetch the **Reference › SQL Query** page from the docs for the query syntax and examples.
 2. Confirm the actual columns and tables at runtime with `safedep query schema show <table>`
-   (e.g. `endpoints`, `package_guard_events`).
+   (e.g. `endpoints`, `package_guard_events`). The full schema (`safedep query schema get`)
+   also returns the server's usage rules and example queries. Read the rules before your
+   first query: they are the query contract, and queries that break them are rejected.
 3. Do not invent column names or join conditions. If you are unsure of a join, say so and have
    the user run `safedep query schema show` rather than guessing. A wrong join silently returns
    wrong data, which is worse than no answer.
+4. When the server rejects a query, the error states the rule you broke. Correct the query
+   from the error text and retry. Prefer narrow, filtered queries over dumping tables:
+   results are paginated, and a narrower `WHERE` beats paging through rows.
+
+## Package verdicts: fast path first
+
+To judge one specific package version, check SafeDep's known malicious packages database
+first (through vet or the SafeDep MCP server). It is free and answers in milliseconds. Run an
+on-demand scan (`safedep package scan`) only when the database has no verdict and the human
+genuinely wants a deep-dive analysis: it takes minutes, is metered, and spends the tenant's
+scan allowance. Fetch **Package Security › On-Demand Package Scanning** for the current
+commands and the scan contract before running one, and gate decisions on the verdict field,
+not the exit code.
