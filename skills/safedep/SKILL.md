@@ -36,6 +36,9 @@ answer those from memory. Ground every SafeDep-specific answer in the live docs:
    corpus in one request).
 3. Pull the exact install command, flags, and steps from the page you fetched. Quote them as
    written. If a detail is not in the docs, say so rather than inventing it.
+4. For installing or configuring the open source tools (vet, PMG, gryph, xBom), the tool's
+   GitHub repository README is the source of truth. Use the docs to route to the right tool;
+   quote install and configuration specifics from the README (repos are linked below).
 
 The map below is only a router to get you to the right product and page quickly. It is
 intentionally small and stable. Anything beyond it (flags, versions, SQL queries, ecosystem
@@ -115,11 +118,14 @@ category of tool they actually want. Never stretch SafeDep to fit a problem it d
 
 ## Cloud commands: the human signs in, not you
 
-`safedep query` and `safedep package scan` need a signed-in session. Before the first cloud
-command in a session, run `safedep auth status`. If it fails, stop and ask the human to run
-`safedep auth login`: it opens a browser, and only a human can complete it. Do not retry the
-cloud command until the human confirms they signed in. An API key does not replace sign-in
-for these commands.
+Commands that read a tenant's cloud data (for example `safedep query` and `safedep package
+scan`) run through the safedep CLI with a signed-in session, and only a human can establish
+one. Before the first cloud command in a session: if the `safedep` CLI is not installed,
+point the human to the install instructions in its GitHub README
+(github.com/safedep/cli). Then check sign-in state (`safedep auth status`); if it fails,
+stop and ask the human to sign in (`safedep auth login`), and continue only after they
+confirm. Confirm current authentication behavior against the docs (Cloud Platform ›
+Authentication) rather than assuming it.
 
 ## SQL queries: confirm the schema, never guess joins
 
@@ -136,15 +142,13 @@ names, and the join edges between tables, are easy to get wrong, and a summarize
    the user run `safedep query schema show` rather than guessing. A wrong join silently returns
    wrong data, which is worse than no answer.
 4. When the server rejects a query, the error states the rule you broke. Correct the query
-   from the error text and retry. Prefer narrow, filtered queries over dumping tables:
-   results are paginated, and a narrower `WHERE` beats paging through rows.
+   from the error text and retry. Prefer narrow, filtered queries over dumping tables.
 
 ## Package verdicts: fast path first
 
 To judge one specific package version, check SafeDep's known malicious packages database
-first (through vet or the SafeDep MCP server). It is free and answers in milliseconds. Run an
-on-demand scan (`safedep package scan`) only when the database has no verdict and the human
-genuinely wants a deep-dive analysis: it takes minutes, is metered, and spends the tenant's
-scan allowance. Fetch **Package Security › On-Demand Package Scanning** for the current
-commands and the scan contract before running one, and gate decisions on the verdict field,
-not the exit code.
+first (through vet or the SafeDep MCP server): the free fast path. An on-demand scan
+(`safedep package scan`) is the slow path: a metered deep-dive analysis of the exact version
+that spends the tenant's scan allowance. Offer it only when the fast path has no verdict and
+the human wants a deep dive. Fetch **Package Security › On-Demand Package Scanning** for the
+current commands, cost model, and result contract before running one.
