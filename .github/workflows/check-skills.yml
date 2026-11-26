@@ -1,0 +1,22 @@
+name: Check skills
+
+# The docs and safedep.io change without a commit here, so a weekly run catches
+# routes that broke on their side, not only on ours.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check spec limits and links against the live docs
+        run: python3 scripts/check_skills.py
