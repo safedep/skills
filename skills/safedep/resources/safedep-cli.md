@@ -1,17 +1,19 @@
 # The safedep CLI: SafeDep Cloud in the terminal
 
-The `safedep` CLI is SafeDep Cloud's client in the terminal. It is not a query tool; it is
-the whole cloud surface, and it grows. Current command domains (name-level, not exhaustive):
+The `safedep` CLI is SafeDep Cloud's client in the terminal. It covers the whole cloud surface, not
+only queries, and it grows. Current command domains (names only, not exhaustive):
 
 | Domain | What it does |
 |---|---|
 | `safedep auth` | Sign in (device flow), sign out, session and tenant status, profiles |
-| `safedep endpoint` | The fleet: list endpoints (filter by capability, blocked installs, silent duration), per-endpoint detail, fleet health over a time window, activity and inventory feeds |
-| `safedep project` | Materialize projects from linked GitHub repos; submit and list cloud-hosted project scans |
-| `safedep package` | On-demand malware analysis of a specific package version: submit, poll, list, full report |
-| `safedep query` | SQL over tenant data: execute statements, discover the schema |
+| `safedep endpoint` | The fleet: list endpoints, per-endpoint detail, fleet health, activity and inventory |
+| `safedep project` | Projects from linked repositories, their labels and cloud-hosted scans |
+| `safedep policy` | The tenant's cloud policy: block and trust rules, changes (draft, preview, publish), decisions, revisions |
+| `safedep audit` | Audit events for the tenant |
+| `safedep package` | On-demand malware analysis of one package version: submit, poll, list, report |
+| `safedep query` | SQL over tenant data: run statements, discover the schema |
 | `safedep subscription` | Plan and billing: status, trial, addons, on-demand billing, billing portal |
-| `safedep integration` | Registry integrations, e.g. the JFrog XRay malicious-package push daemon |
+| `safedep integration` | Integrations such as Bitbucket and JFrog |
 | `safedep protect` / `safedep setup` | Install the SafeDep MCP server into AI coding agents |
 
 ## Discover, don't memorize
@@ -19,77 +21,74 @@ the whole cloud surface, and it grows. Current command domains (name-level, not 
 The CLI is a strict noun-verb tree built for discovery. Do not guess or recall flags:
 
 1. Run `safedep --help` and `safedep <noun> --help` to find the right command.
-2. Add `-o json` to any data command for machine-readable output.
-3. Server errors come back verbatim; read them and self-correct.
-4. Exact flags per command live in `--help` and the CLI repository's `docs/cmd/` pages.
+2. Ask for JSON (`-o json`) on data commands so you can parse the output.
+3. Server errors come back verbatim. Read them and correct course.
+4. Exact flags live in `--help` and the `docs/cmd/` pages of github.com/safedep/cli.
+5. The CLI can do more than docs.safedep.io shows. Before you say a command does not exist,
+   check `safedep <noun> --help`, or with no shell, the `docs/cmd/` page list (one page per
+   command).
 
 ## Pick the cheapest tool that answers
 
-Escalate only when the previous rung cannot answer:
+Move to the next rung only when the previous one cannot answer:
 
-1. **Purpose-built command first.** Fleet health, silent endpoints, blocked installs,
-   endpoint activity, scan status, plan status: each has a direct `safedep` command
-   (mostly under `safedep endpoint`). One command, no schema work.
-2. **SQL query second** (`safedep query`), for arbitrary or cross-table questions the
-   purpose-built commands cannot answer. Follow the SQL rules below.
-3. **On-demand scan last** (`safedep package scan`), for deep-dive verdicts. Follow the
-   verdict rules below; it is metered.
+1. **A purpose-built command first.** Fleet health, silent endpoints, blocked installs, endpoint
+   activity, scan status and plan status each have a direct command (mostly under
+   `safedep endpoint`). One command, no schema work.
+2. **A SQL query second** (`safedep query`), for questions the purpose-built commands cannot
+   answer. Follow the SQL rules below.
+3. **An on-demand scan last** (`safedep package scan`), for a deep-dive verdict. It is metered.
+   Follow the verdict rules below.
 
 ## The human signs in, not you
 
-Commands that read a tenant's cloud data run with a signed-in session, and only a human can
-establish one.
+Commands that read a tenant's data need a signed-in session, and only a human can create one.
 
-1. If the `safedep` CLI is not installed, fetch the docs page **Get Started › Install the
-   SafeDep Skill** and give the human the minimal install command that fits their platform.
-   The CLI's GitHub repository (github.com/safedep/cli) carries the full option list; lead
-   with the docs steps.
+1. If the CLI is not installed, fetch `/get-started/cli-tools` and give the user the install
+   command for their platform. The CLI repository (github.com/safedep/cli) lists every option.
 2. Check sign-in state with `safedep auth status`.
-3. If it fails, stop and ask the human to sign in with `safedep auth login`. Continue only
-   after they confirm they signed in.
-4. Confirm current authentication behavior against the docs (Cloud Platform › Authentication)
-   rather than assuming it.
+3. If it fails, stop and ask the user to sign in with `safedep auth login`. Continue only after
+   they confirm.
+4. Confirm current authentication behavior in `/governance/cloud/authentication` rather than
+   assuming it.
 
-## The human spends the money
+## The human approves changes and spending
 
-`safedep subscription` mutations (trial, addons, on-demand billing) change what the tenant
-pays for, and rescanning an already-analyzed package spends the scan allowance. Run these
-only when the human explicitly asks, and restate what it changes or costs before running.
-Reading status (`safedep subscription status`) is always fine.
+- **Spending.** `safedep subscription` changes (trial, addons, on-demand billing) change what the
+  tenant pays, and rescanning an analyzed package spends the scan allowance. Run them only when
+  the user asks, and say what it changes or costs first. Reading `safedep subscription status` is
+  always fine.
+- **Policy.** A published cloud policy change applies to every endpoint and project it targets.
+  Draft the change, show the user the preview, and publish only on their explicit go-ahead. See
+  `/concepts/policy-revisions` for how changes, previews and rollback work.
 
 ## SQL queries: confirm the schema, never guess joins
 
-SafeDep Cloud exposes a SQL query interface (`safedep query exec --sql "..."`). Table and column
-names, and the join edges between tables, are easy to get wrong, and a summarized index like
-`llms.txt` may not carry them faithfully. Before writing or running a query:
+Table names, column names and the joins between tables are easy to get wrong. Before you write
+or run a query:
 
-1. Fetch the **Reference › SQL Query** page from the docs for the query syntax and examples.
-   For endpoint investigations (a suspicious install, blocks, bypasses, stale endpoints),
-   fetch **Cloud Platform › Endpoint Hub › Agentic Endpoint Investigation** for ready
-   playbooks.
-2. Confirm the actual columns and tables at runtime with `safedep query schema show <table>`
-   (e.g. `endpoints`, `package_guard_events`). The full schema (`safedep query schema get`)
-   also returns the server's usage rules and example queries. Read the rules before your
-   first query: they are the query contract, and queries that break them are rejected.
-3. Do not invent column names or join conditions. If you are unsure of a join, say so and have
-   the user run `safedep query schema show` rather than guessing. A wrong join silently returns
-   wrong data, which is worse than no answer.
-4. When the server rejects a query, the error states the rule you broke. Correct the query
-   from the error text and retry. Prefer narrow, filtered queries over dumping tables.
+1. Fetch `/reference/sql-query` for the syntax and `/governance/cloud/query-with-sql` for worked
+   examples. For endpoint investigations (exposure to a compromised package, blocks, bypasses,
+   endpoints that stopped reporting), fetch `/governance/cloud/endpoint-hub/agentic-investigation`
+   for ready playbooks.
+2. Confirm the tables and columns at runtime with the `safedep query schema` commands. The full
+   schema also returns the server's usage rules and example queries. Read the rules before your
+   first query: queries that break them are rejected.
+3. Do not invent column names or join conditions. If you are unsure of a join, say so and check
+   the schema. A wrong join silently returns wrong data, which is worse than no answer.
+4. When the server rejects a query, the error names the rule you broke. Fix the query from the
+   error and retry. Prefer narrow, filtered queries over dumping tables.
 
 ## Package verdicts: fast path first
 
-To judge one specific package version, check SafeDep's known malicious packages database
-first (through vet or the SafeDep MCP server): the free fast path. With `curl` available,
-you can also hit the free community API directly. Pipe through `jq` and select only the
-inference so the full report does not flood your context:
-
-```bash
-curl --http2 --json '{"target":{"package_version":{"package": {"ecosystem": "ECOSYSTEM_NPM", "name": "safedep-test-pkg"}, "version":"0.1.2"}}}' \
-  https://community-api.safedep.io/safedep.services.malysis.v1.MalwareAnalysisService/QueryPackageAnalysis | jq '.report.inference'
-```
-
-An on-demand scan (`safedep package scan`) is the slow path: a metered deep-dive analysis of
-the exact version that spends the tenant's scan allowance. Offer it only when the fast path
-has no verdict and the human wants a deep dive. Fetch **Package Security › On-Demand Package
-Scanning** for the current commands, cost model, and result contract before running one.
+1. **Fast path (free).** Check SafeDep's known malicious packages database first. It is built
+   into vet, PMG and the SafeDep MCP server. Fetch `/package-security/scan/malware-lookup` for
+   the current commands. It answers in milliseconds but only covers packages SafeDep has already
+   analyzed.
+2. **Slow path (metered).** An on-demand scan (`safedep package scan`) runs a new analysis of the
+   exact version and spends the tenant's scan allowance. Offer it only when the fast path has no
+   verdict and the user wants a deep dive. Fetch `/package-security/scan/overview` for the
+   commands and cost model.
+3. **Gate on the verdict, not the exit code.** Read the result contract in
+   `/package-security/scan/automation`. Only a clean verdict passes. Treat anything else,
+   including an inconclusive result, as needs-review, never as safe.

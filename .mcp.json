@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "safedep-docs": {
+      "type": "http",
+      "url": "https://docs.safedep.io/mcp"
+    }
+  }
+}
